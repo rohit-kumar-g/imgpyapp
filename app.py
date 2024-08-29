@@ -12,6 +12,18 @@ IMAGE_SAVE_DIR = os.path.join(os.path.dirname(__file__), 'static', 'images')
 if not os.path.exists(IMAGE_SAVE_DIR):
     os.makedirs(IMAGE_SAVE_DIR)
 
+@app.route('/')
+def home():
+    return "Welcome to the homepage!"
+
+@app.route('/about')
+def about():
+    return "About page"
+
+@app.route('/contact')
+def contact():
+    return "Contact page"
+
 @app.route('/img', methods=['GET', 'POST'])
 def index():
 
