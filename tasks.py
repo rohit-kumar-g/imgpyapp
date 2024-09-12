@@ -1,3 +1,4 @@
+import redis
 from celery import Celery
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -5,6 +6,18 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import json
 import os
+
+# Redis connection with Upstash
+r = redis.Redis(
+    host='able-horse-62993.upstash.io',
+    port=6379,
+    password='AfYRAAIjcDFmNjZkMDQ4ZWUyOTE0M2NmOTdkYjQ3MWJhYzc5YjQ1NHAxMA',
+    ssl=True
+)
+
+# Example Redis test
+r.set('foo', 'bar')
+print(r.get('foo'))
 
 # Path to ChromeDriver
 CHROMEDRIVER_PATH = 'chromedriver.exe'
@@ -16,8 +29,8 @@ chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
-# Initialize Celery
-celery = Celery('tasks', broker='redis://localhost:6379/0')
+# Initialize Celery with Redis broker
+celery = Celery('tasks', broker='redis://able-horse-62993.upstash.io:6379/0', backend='redis://able-horse-62993.upstash.io:6379/0')
 
 @celery.task
 def fetch_new_data():
@@ -45,3 +58,8 @@ def fetch_new_data():
     # Save the new results to the file
     with open(RESULTS_FILE, 'w', encoding='utf-8') as file:
         json.dump(scraped_texts, file, ensure_ascii=False, indent=4)
+
+    # Optionally, store result in Redis for other tasks
+    r.set('latest_scraped_results', json.dumps(scraped_texts))
+
+    return scraped_texts

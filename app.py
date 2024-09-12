@@ -5,10 +5,10 @@ import json
 
 app = Flask(__name__)
 
-# Configuration
+# Configuration for Upstash Redis
 app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379/0',
-    CELERY_RESULT_BACKEND='redis://localhost:6379/0'
+    CELERY_BROKER_URL='redis://able-horse-62993.upstash.io:6379/0',
+    CELERY_RESULT_BACKEND='redis://able-horse-62993.upstash.io:6379/0'
 )
 
 @app.route('/getitems', methods=['GET'])
